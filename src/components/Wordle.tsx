@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useWordle } from "../hooks/useWordle";
+import { WordleGrid } from "./WordleGrid";
 
 type Props = {
   solution: string;
 };
 const Wordle = ({ solution }: Props) => {
-  const { currentGuess, handleKeyUp } = useWordle(solution);
+  const { currentGuess, handleKeyUp, guesses, isCorrect, turn } =
+    useWordle(solution);
 
   useEffect(() => {
     window.addEventListener("keyup", handleKeyUp);
@@ -13,11 +15,21 @@ const Wordle = ({ solution }: Props) => {
     return () => window.removeEventListener("keyup", handleKeyUp);
   }, [handleKeyUp]);
 
+  useEffect(() => {
+    console.log({ guesses, isCorrect, turn });
+  }, [guesses, isCorrect, turn]);
+
   return (
-    <div>
-      <div>{solution}</div>
-      <div>{currentGuess}</div>
-    </div>
+    <>
+      <div>Solution - {solution}</div>
+      <div>Current guess - {currentGuess}</div>
+      <div className="">guesses - {JSON.stringify(guesses)}</div>
+      <WordleGrid
+        currentGuess={currentGuess}
+        guesses={guesses}
+        turn={turn}
+      ></WordleGrid>
+    </>
   );
 };
 
