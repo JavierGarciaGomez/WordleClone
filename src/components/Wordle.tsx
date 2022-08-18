@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useWordle } from "../hooks/useWordle";
+import { Keypad } from "./Keypad";
 import { WordleGrid } from "./WordleGrid";
 
 type Props = {
   solution: string;
 };
 const Wordle = ({ solution }: Props) => {
-  const { currentGuess, handleKeyUp, guesses, isCorrect, turn } =
+  const { currentGuess, handleKeyUp, guesses, isCorrect, turn, usedKeys } =
     useWordle(solution);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const Wordle = ({ solution }: Props) => {
         guesses={guesses}
         turn={turn}
       ></WordleGrid>
+      <Keypad usedKeys={usedKeys}></Keypad>
     </>
   );
 };

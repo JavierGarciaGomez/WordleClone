@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MAXTURNS, WORDLENGTH } from "../helpers/constants";
-import { IFormattedGuess } from "../interfaces/interfaces";
+import { IFormattedGuess, IStringDictionary } from "../interfaces/interfaces";
 
 export const useWordle = (solution: string) => {
   const [turn, setTurn] = useState(0);
@@ -8,6 +8,7 @@ export const useWordle = (solution: string) => {
   const [guesses, setGuesses] = useState<IFormattedGuess[][]>([...Array(6)]); // each guess is an array
   const [history, setHistory] = useState<string[]>([]); // each guess is a string
   const [isCorrect, setIsCorrect] = useState(false);
+  const [usedKeys, setUsedKeys] = useState<IStringDictionary>({});
 
   const formatGuess = () => {
     console.log("formatting");
@@ -54,6 +55,25 @@ export const useWordle = (solution: string) => {
     setTurn((prevTurn) => {
       return prevTurn + 1;
     });
+    setUsedKeys((prevUsedKeys) => {
+      let newKeys = { ...prevUsedKeys };
+      formattedGuess.forEach((letter) => {
+        const currentColor = newKeys[letter.key];
+        if (letter.color === "green") {
+          newKeys[letter.key] = "green";
+          return;
+        }
+        if (letter.color === "yellow" && currentColor !== "green") {
+          prevUsedKeys[letter.key] = "yellow";
+          return;
+        }
+        if (letter.color === "grey" && currentColor !== ("green" || "yellow")) {
+          prevUsedKeys[letter.key] = "grey";
+          return;
+        }
+      });
+      return newKeys;
+    });
     setCurrentGuess("");
   };
 
@@ -95,5 +115,6 @@ export const useWordle = (solution: string) => {
     history,
     isCorrect,
     handleKeyUp,
+    usedKeys,
   };
 };
