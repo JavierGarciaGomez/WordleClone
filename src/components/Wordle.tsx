@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useWordle } from "../hooks/useWordle";
-import { Keypad } from "./Keypad";
+import { Keyboard } from "./Keyboard";
 import { Modal } from "./Modal";
 import { WordleGrid } from "./WordleGrid";
 
 type Props = {
   solution: string;
+  wordLength: number;
 };
-const Wordle = ({ solution }: Props) => {
+const Wordle = ({ solution, wordLength }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const {
     currentGuess,
     handleKeyUp,
     handleClick,
-    guesses,
+    formattedTries,
     isCorrect,
     turn,
-    usedKeys,
-  } = useWordle(solution);
+    formattedKeys,
+    activeTileAnimation,
+    removeAnimation,
+  } = useWordle(solution, wordLength);
+
+  // console.log({
+  //   formattedTries,
+  // });
 
   useEffect(() => {
     // console.log("adding listener");
@@ -44,10 +51,15 @@ const Wordle = ({ solution }: Props) => {
     <>
       <WordleGrid
         currentGuess={currentGuess}
-        guesses={guesses}
+        formattedTries={formattedTries}
         turn={turn}
+        activeTileAnimation={activeTileAnimation}
+        removeAnimation={removeAnimation}
       ></WordleGrid>
-      <Keypad usedKeys={usedKeys} handleClick={handleClick}></Keypad>
+      <Keyboard
+        formattedKeys={formattedKeys}
+        handleClick={handleClick}
+      ></Keyboard>
       {showModal && (
         <Modal isCorrect={isCorrect} turn={turn} solution={solution} />
       )}

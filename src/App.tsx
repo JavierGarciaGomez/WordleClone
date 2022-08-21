@@ -12,8 +12,7 @@ function App() {
     (word) => word.length === wordLength
   );
   const [solution, setSolution] = useState<string>("");
-  const {} = useWordle(solution);
-  console.log({ fiveWords: filteredWords });
+
   console.log({ solution });
 
   useEffect(() => {
@@ -26,7 +25,7 @@ function App() {
   return (
     <div className="App">
       <h1>Wordle clone</h1>
-      {solution && <Wordle solution={solution} />}
+      {solution && <Wordle solution={solution} wordLength={wordLength} />}
     </div>
   );
 }

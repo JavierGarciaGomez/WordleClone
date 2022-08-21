@@ -10,10 +10,10 @@ import { keyButtons } from "../data/keyButtons";
 import { KeyButton } from "./KeyButton";
 
 type Props = {
-  usedKeys: IStringDictionary;
+  formattedKeys: IStringDictionary;
   handleClick: (e: React.MouseEvent<HTMLElement>) => void;
 };
-export const Keypad = ({ usedKeys, handleClick }: Props) => {
+export const Keyboard = ({ formattedKeys, handleClick }: Props) => {
   // const handleClick = (e: React.SyntheticEvent<HTMLDivElement>) => {
 
   const [keys, setKeys] = useState<ILetter[]>(keyboardKeys);
@@ -27,33 +27,20 @@ export const Keypad = ({ usedKeys, handleClick }: Props) => {
   // }, []);
 
   return (
-    <>
-      <div className="keypad">
-        {keys &&
-          keys.map((key) => {
-            const color = usedKeys[key.key];
-            return (
-              <div
-                key={key.key}
-                className={color}
-                onClick={handleClick}
-                data-keya={key.key}
-              >
-                {key.key}
-              </div>
-            );
-          })}
-      </div>
-      <div className="c-keyboard">
-        {keyButtons.map((keyButton) => (
+    <div className="c-keyboard">
+      {keyButtons.map((keyButton) => {
+        const color = formattedKeys[keyButton.dataKey];
+
+        return (
           <KeyButton
+            color={color}
             key={keyButton.dataKey}
             keyButton={keyButton}
             handleClick={handleClick}
           />
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 };
 
