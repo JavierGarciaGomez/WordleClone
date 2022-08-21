@@ -9,4 +9,8 @@ export type IStringDictionary = {
   [key: string]: string;
 };
 
-const lett = ["a", "b"];
+export type IKeyButton = {
+  dataKey: string;
+  isLarge: boolean;
+  iconElement?: JSX.Element;
+};

@@ -81,7 +81,7 @@ export const useWordle = (solution: string) => {
 
   const handleInputKey = (key: string) => {
     console.log(key);
-    if (key === "Enter") {
+    if (key.toUpperCase() === "ENTER") {
       // only add guess if turn is less than 5
       if (turn > MAXTURNS) {
         return;
@@ -98,7 +98,7 @@ export const useWordle = (solution: string) => {
       addNewGuess(formattedGuess);
     }
 
-    if (key === "Backspace") {
+    if (key.toUpperCase() === "BACKSPACE") {
       setCurrentGuess((prev) => prev.slice(0, -1));
       return;
     }
@@ -114,9 +114,8 @@ export const useWordle = (solution: string) => {
     handleInputKey(key);
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as Element;
-    handleInputKey(target.innerHTML);
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    handleInputKey(e.currentTarget.dataset.key!);
   };
 
   return {

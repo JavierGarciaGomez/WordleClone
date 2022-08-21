@@ -19,6 +19,7 @@ export const keyboardKeys = [
   { key: "k" },
   { key: "l" },
   { key: "ñ" },
+  { key: "->" },
   { key: "z" },
   { key: "x" },
   { key: "c" },
@@ -26,4 +27,5 @@ export const keyboardKeys = [
   { key: "b" },
   { key: "n" },
   { key: "m" },
+  { key: "<-" },
 ];

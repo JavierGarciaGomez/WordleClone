@@ -1,11 +1,17 @@
 import React, { MouseEvent, useEffect, useState } from "react";
 import { keyboardKeys } from "../data/keyboardKeys";
-import { ILetter, IStringDictionary } from "../interfaces/interfaces";
+import {
+  IKeyButton,
+  ILetter,
+  IStringDictionary,
+} from "../interfaces/interfaces";
 import { useWordle } from "../hooks/useWordle";
+import { keyButtons } from "../data/keyButtons";
+import { KeyButton } from "./KeyButton";
 
 type Props = {
   usedKeys: IStringDictionary;
-  handleClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleClick: (e: React.MouseEvent<HTMLElement>) => void;
 };
 export const Keypad = ({ usedKeys, handleClick }: Props) => {
   // const handleClick = (e: React.SyntheticEvent<HTMLDivElement>) => {
@@ -21,21 +27,34 @@ export const Keypad = ({ usedKeys, handleClick }: Props) => {
   // }, []);
 
   return (
-    <div className="keypad">
-      {keys &&
-        keys.map((key) => {
-          const color = usedKeys[key.key];
-          return (
-            <div
-              key={key.key}
-              className={color}
-              onClick={handleClick}
-              data-keya={key.key}
-            >
-              {key.key}
-            </div>
-          );
-        })}
-    </div>
+    <>
+      <div className="keypad">
+        {keys &&
+          keys.map((key) => {
+            const color = usedKeys[key.key];
+            return (
+              <div
+                key={key.key}
+                className={color}
+                onClick={handleClick}
+                data-keya={key.key}
+              >
+                {key.key}
+              </div>
+            );
+          })}
+      </div>
+      <div className="c-keyboard">
+        {keyButtons.map((keyButton) => (
+          <KeyButton
+            key={keyButton.dataKey}
+            keyButton={keyButton}
+            handleClick={handleClick}
+          />
+        ))}
+      </div>
+    </>
   );
 };
+
+// class, data-key, label, keyLarge, innerElement Icon
