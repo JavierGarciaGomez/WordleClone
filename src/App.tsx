@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useWordle } from "./hooks/useWordle";
 import Wordle from "./components/Wordle";
+import { availableWords } from "./data/availableWords";
 
+// https://www.youtube.com/watch?v=jkUn_FsyNqc&list=PL4cUxeGkcC9gXdVXVJBmHpSI7zCEcjLUX&index=16
+// https://www.youtube.com/watch?v=Wak7iN4JZzU
+// https://www.youtube.com/watch?v=mpby4HiElek&t=4103s
 function App() {
+  const [wordLength, setWordLength] = useState(5);
+  const filteredWords = availableWords.filter(
+    (word) => word.length === wordLength
+  );
   const [solution, setSolution] = useState<string>("");
-
   const {} = useWordle(solution);
+  console.log({ fiveWords: filteredWords });
+  console.log({ solution });
 
   useEffect(() => {
-    // todo store url as env
-    // todo: maybe use a local js file with an array
-    // todo: create a fetch function
-    fetch("http://localhost:3000/words")
-      .then((res) => res.json())
-      .then((json) => {
-        // random int between 0 & 14
-        const randomSolution = json[Math.floor(Math.random() * json.length)];
-        setSolution(randomSolution);
-      });
+    const randomSolution =
+      filteredWords[Math.floor(Math.random() * filteredWords.length)];
+
+    setSolution(randomSolution);
   }, [setSolution]);
 
   return (

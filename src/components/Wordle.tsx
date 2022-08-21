@@ -9,8 +9,15 @@ type Props = {
 };
 const Wordle = ({ solution }: Props) => {
   const [showModal, setShowModal] = useState(false);
-  const { currentGuess, handleKeyUp, guesses, isCorrect, turn, usedKeys } =
-    useWordle(solution);
+  const {
+    currentGuess,
+    handleKeyUp,
+    handleClick,
+    guesses,
+    isCorrect,
+    turn,
+    usedKeys,
+  } = useWordle(solution);
 
   useEffect(() => {
     // console.log("adding listener");
@@ -40,7 +47,7 @@ const Wordle = ({ solution }: Props) => {
         guesses={guesses}
         turn={turn}
       ></WordleGrid>
-      <Keypad usedKeys={usedKeys}></Keypad>
+      <Keypad usedKeys={usedKeys} handleClick={handleClick}></Keypad>
       {showModal && (
         <Modal isCorrect={isCorrect} turn={turn} solution={solution} />
       )}

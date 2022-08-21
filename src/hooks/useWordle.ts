@@ -77,9 +77,10 @@ export const useWordle = (solution: string) => {
     setCurrentGuess("");
   };
 
-  const handleKeyUp = (event: KeyboardEvent) => {
-    const { key } = event;
+  const submitGuess = () => {};
 
+  const handleInputKey = (key: string) => {
+    console.log(key);
     if (key === "Enter") {
       // only add guess if turn is less than 5
       if (turn > MAXTURNS) {
@@ -108,6 +109,16 @@ export const useWordle = (solution: string) => {
     }
   };
 
+  const handleKeyUp = (event: KeyboardEvent) => {
+    const { key } = event;
+    handleInputKey(key);
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as Element;
+    handleInputKey(target.innerHTML);
+  };
+
   return {
     turn,
     currentGuess,
@@ -115,6 +126,7 @@ export const useWordle = (solution: string) => {
     history,
     isCorrect,
     handleKeyUp,
+    handleClick,
     usedKeys,
   };
 };
