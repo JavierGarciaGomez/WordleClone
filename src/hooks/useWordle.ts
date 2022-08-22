@@ -243,6 +243,7 @@ export const useWordle = (solution: string, wordLength = 5) => {
           return;
         }
       });
+      console.log({ newKeys });
       return { ...newKeys };
     });
   };
