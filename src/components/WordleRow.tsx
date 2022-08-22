@@ -21,6 +21,7 @@ export const WordleRow = ({
         if (i === formattedTry.length - 1) {
           return (
             <div
+              key={i}
               className={className}
               data-letter={formattedKey.key}
               data-state={formattedKey.state}
@@ -31,6 +32,7 @@ export const WordleRow = ({
         } else {
           return (
             <div
+              key={i}
               className={className}
               data-letter={formattedKey.key}
               data-state={formattedKey.state}

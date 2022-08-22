@@ -112,112 +112,72 @@ export const useWordle = (solution: string, wordLength = 5) => {
       return;
     }
 
-    // TODO
+    // TODO get the new format before flipping tiles
 
-    // setActiveTileAnimation("flip");
-    flipTiles();
-    // for (let i = 0; i < wordLength; i++) {
-    //   setTimeout(() => {
-    //     setFormattedTries((prev) => {
-    //       let newFormattedTries = [...prev];
-    //       let newFormattedTry = (newFormattedTries[turn][i].className =
-    //         "tile flip");
+    const formattedCurrentGuess = formatCurrentGuess();
 
-    //       return [...newFormattedTries];
-    //     });
-    //   }, (500 * i) / 2);
-    // }
-    // formatGuess();
-    // setFormattedTries((prev) => {
-    //   let newFormattedTries = [...prev];
-    //   let newFormattedTry = newFormattedTries[turn].map((key) => {
-    //     key.className = "tile active flip";
-    //     return key;
-    //   });
-    //   newFormattedTries[turn] = [...newFormattedTry];
-
-    //   return [...newFormattedTries];
-    // });
-
-    // if (currentGuess === solution) {
-    //   setIsCorrect(true);
-    // }
+    flipTiles(formattedCurrentGuess);
+    changeTurn(formattedCurrentGuess);
+    checkWinLose();
   };
 
-  const flipTiles = async () => {
-    // const delays = async () =>
-    //   new Promise<void>(async (resolve, reject) => {
-    //     for (let i = 1; i <= 5; ++i) {
-    //       await setDelay(i);
-    //     }
-    //     resolve();
-    //   });
-
-    // const setDelay = async (i: number) =>
-    //   new Promise<void>(async (resolve, reject) => {
-    //     setTimeout(function () {
-    //       console.log(i);
-    //       resolve();
-    //     }, 1000);
-    //   });
-
-    // await delays();
-    // console.log("AAAAAAAAAAAA");
-
-    const delays2 = async () =>
+  const flipTiles = async (formattedCurrentGuess: IFormattedTile[]) => {
+    const delays = async () =>
       new Promise<void>(async (resolve, reject) => {
         for (let i = 0; i < wordLength; ++i) {
-          flip2(i);
+          console.log("for", { i });
+          await formatWithFlip(i);
+          if (i === wordLength - 1) {
+            await formatWithFlip(i);
+            resolve();
+          }
         }
-        resolve();
       });
 
-    const flip2 = (i: number) =>
+    const formatWithFlip = (i: number) =>
       new Promise<void>((resolve, reject) => {
         setTimeout(() => {
-          console.log({ i });
+          console.log("flip2", { i });
           setFormattedTries((prev) => {
             let newFormattedTries = [...prev];
-            let newFormattedTry = (newFormattedTries[turn][i].className =
-              "tile flip");
+            newFormattedTries[turn][i] = { ...formattedCurrentGuess[i] };
+
+            resolve();
             return [...newFormattedTries];
           });
-          resolve();
-        }, (2000 * i) / 2);
+        }, 1000 / 2);
       });
-    // => {
-    //     setTimeout(() => {
-    //       console.log('bla bla');
-    //       resolve();
-    //     }, seconds * 1000);
-    //   });
-    // }
 
-    await delays2();
-    console.log("here");
+    await delays();
+
+    // remove flip class
     for (let i = 0; i < wordLength; i++) {
       setFormattedTries((prev) => {
         let newFormattedTries = [...prev];
-        let newFormattedTry = (newFormattedTries[turn][i].className = "tile");
+        newFormattedTries[turn][i] = {
+          ...formattedCurrentGuess[i],
+          className: "tile",
+        };
 
         return [...newFormattedTries];
       });
     }
   };
 
-  const formatGuess = () => {
+  const formatCurrentGuess = () => {
     let solutionArray: (string | null)[] = [...solution];
 
     let formattedGuess: IFormattedTile[] = [...currentGuess].map((letter) => ({
       key: letter,
       color: "grey",
       state: "wrong",
-      className: "",
+      className: "tile flip",
     }));
 
     formattedGuess.forEach((letter, index) => {
       if (solution[index] === letter.key.toLowerCase()) {
         formattedGuess[index].color = "green";
+        formattedGuess[index].state = "correct";
         solutionArray[index] = null;
       }
     });
@@ -226,14 +186,16 @@ export const useWordle = (solution: string, wordLength = 5) => {
     formattedGuess.forEach((letter, i) => {
       if (
         solutionArray.includes(letter.key.toLowerCase()) &&
-        letter.color !== "green"
+        letter.state !== "correct"
       ) {
         formattedGuess[i].color = "yellow";
+        letter.state = "partial";
         solutionArray[solutionArray.indexOf(letter.key.toLowerCase())] = null;
       }
     });
 
-    changeTurn(formattedGuess);
+    // changeTurn(formattedGuess);
+    return formattedGuess;
   };
 
   const changeTurn = (formattedGuess: IFormattedTile[]) => {
@@ -241,11 +203,11 @@ export const useWordle = (solution: string, wordLength = 5) => {
     //   setIsCorrect(true);
     // }
 
-    setFormattedTries((prev) => {
-      let newGuesses = [...prev];
-      newGuesses[turn] = formattedGuess;
-      return newGuesses;
-    });
+    // setFormattedTries((prev) => {
+    //   let newGuesses = [...prev];
+    //   newGuesses[turn] = formattedGuess;
+    //   return newGuesses;
+    // });
 
     setHistory((prevHistory) => {
       return [...prevHistory, currentGuess];
@@ -253,6 +215,7 @@ export const useWordle = (solution: string, wordLength = 5) => {
     setTurn((prevTurn) => {
       return prevTurn + 1;
     });
+
     setFormattedKeys((prevUsedKeys) => {
       let newKeys = { ...prevUsedKeys };
       formattedGuess.forEach((letter) => {
@@ -272,7 +235,14 @@ export const useWordle = (solution: string, wordLength = 5) => {
       });
       return newKeys;
     });
-    setCurrentGuess("");
+  };
+
+  const checkWinLose = () => {
+    if (currentGuess === solution) {
+      setIsCorrect(true);
+    } else {
+      setCurrentGuess("");
+    }
   };
 
   const removeAnimation = () => {

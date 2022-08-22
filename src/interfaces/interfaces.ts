@@ -1,7 +1,7 @@
 export type IFormattedTile = {
   key: string;
   color: string;
-  state: "empty" | "active" | "wrong" | "parcial" | "correct";
+  state: "empty" | "active" | "wrong" | "partial" | "correct";
   className: string;
 };
 
