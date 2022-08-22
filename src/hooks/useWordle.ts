@@ -243,15 +243,11 @@ export const useWordle = (solution: string, wordLength = 5) => {
           return;
         }
       });
-      return newKeys;
+      return { ...newKeys };
     });
   };
 
   const checkWinLose = () => {
-    if (turn === 4) {
-    }
-
-    console.log({ turn });
     if (currentGuess === solution.toUpperCase()) {
       setIsCorrect(true);
       setActiveTileAnimation("dance");
