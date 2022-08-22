@@ -53,6 +53,8 @@ const Wordle = ({ solution, wordLength, resetGame }: Props) => {
     resetGame();
   };
 
+  console.log({ formattedKeys });
+
   return (
     <>
       <WordleGrid
