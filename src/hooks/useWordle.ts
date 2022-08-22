@@ -81,14 +81,13 @@ export const useWordle = (solution: string, wordLength = 5) => {
     }
   };
 
-  const submitGuess = () => {
+  const submitGuess = async () => {
     if (turn > MAXTURNS) {
       return;
     }
 
     // do not allow words not included in dictionary
     if (!availableWords.includes(currentGuess.toLowerCase())) {
-      console.log("not a valid word");
       setFormattedTries((prev) => {
         let newFormattedTries = [...prev];
         let newFormattedTry = newFormattedTries[turn].map((key) => {
@@ -105,6 +104,17 @@ export const useWordle = (solution: string, wordLength = 5) => {
 
     // do not allow duplicate words
     if (history.includes(currentGuess)) {
+      setFormattedTries((prev) => {
+        let newFormattedTries = [...prev];
+        let newFormattedTry = newFormattedTries[turn].map((key) => {
+          key.className = "tile active shake";
+          return key;
+        });
+        newFormattedTries[turn] = [...newFormattedTry];
+
+        return [...newFormattedTries];
+      });
+      // setActiveTileAnimation("shake");
       return;
     }
     // check word is 5 chars
@@ -116,7 +126,7 @@ export const useWordle = (solution: string, wordLength = 5) => {
 
     const formattedCurrentGuess = formatCurrentGuess();
 
-    flipTiles(formattedCurrentGuess);
+    await flipTiles(formattedCurrentGuess);
     changeTurn(formattedCurrentGuess);
     checkWinLose();
   };
@@ -125,11 +135,12 @@ export const useWordle = (solution: string, wordLength = 5) => {
     const delays = async () =>
       new Promise<void>(async (resolve, reject) => {
         for (let i = 0; i < wordLength; ++i) {
-          console.log("for", { i });
           await formatWithFlip(i);
           if (i === wordLength - 1) {
             await formatWithFlip(i);
-            resolve();
+            setTimeout(() => {
+              resolve();
+            }, 250);
           }
         }
       });
@@ -137,7 +148,6 @@ export const useWordle = (solution: string, wordLength = 5) => {
     const formatWithFlip = (i: number) =>
       new Promise<void>((resolve, reject) => {
         setTimeout(() => {
-          console.log("flip2", { i });
           setFormattedTries((prev) => {
             let newFormattedTries = [...prev];
             newFormattedTries[turn][i] = { ...formattedCurrentGuess[i] };
@@ -145,7 +155,7 @@ export const useWordle = (solution: string, wordLength = 5) => {
             resolve();
             return [...newFormattedTries];
           });
-        }, 1000 / 2);
+        }, 250);
       });
 
     await delays();
@@ -238,14 +248,40 @@ export const useWordle = (solution: string, wordLength = 5) => {
   };
 
   const checkWinLose = () => {
-    if (currentGuess === solution) {
+    if (turn === 4) {
+    }
+
+    console.log({ turn });
+    if (currentGuess === solution.toUpperCase()) {
       setIsCorrect(true);
+      setActiveTileAnimation("dance");
+      setFormattedTries((prev) => {
+        let newFormattedTries = [...prev];
+        let newFormattedTry = [...newFormattedTries[turn]];
+        newFormattedTry = newFormattedTry.map((newFormattedKey) => {
+          newFormattedKey.className = "tile dance";
+          return newFormattedKey;
+        });
+        newFormattedTries[turn] = newFormattedTry;
+
+        return newFormattedTries;
+      });
     } else {
       setCurrentGuess("");
     }
   };
 
   const removeAnimation = () => {
+    setActiveTileAnimation(null);
+  };
+
+  const resetWordle = () => {
+    setTurn(0);
+    setCurrentGuess("");
+    setFormattedTries([...emptyFormattedTries]);
+    setHistory([]);
+    setIsCorrect(false);
+    setFormattedKeys({});
     setActiveTileAnimation(null);
   };
 
@@ -260,5 +296,6 @@ export const useWordle = (solution: string, wordLength = 5) => {
     formattedKeys,
     activeTileAnimation,
     removeAnimation,
+    resetWordle,
   };
 };

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MAXTURNS } from "../helpers/constants";
 import { useWordle } from "../hooks/useWordle";
 import { Keyboard } from "./Keyboard";
 import { Modal } from "./Modal";
@@ -7,8 +8,9 @@ import { WordleGrid } from "./WordleGrid";
 type Props = {
   solution: string;
   wordLength: number;
+  resetGame: () => void;
 };
-const Wordle = ({ solution, wordLength }: Props) => {
+const Wordle = ({ solution, wordLength, resetGame }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const {
     currentGuess,
@@ -20,11 +22,8 @@ const Wordle = ({ solution, wordLength }: Props) => {
     formattedKeys,
     activeTileAnimation,
     removeAnimation,
+    resetWordle,
   } = useWordle(solution, wordLength);
-
-  // console.log({
-  //   formattedTries,
-  // });
 
   useEffect(() => {
     // console.log("adding listener");
@@ -35,9 +34,9 @@ const Wordle = ({ solution, wordLength }: Props) => {
       return () => window.removeEventListener("keyup", handleKeyUp);
     }
 
-    if (turn > 5) {
+    if (turn > MAXTURNS - 1) {
       setTimeout(() => setShowModal(true), 2000);
-      console.log("you fucked it up");
+
       window.removeEventListener("keyup", handleKeyUp);
     }
 
@@ -45,7 +44,14 @@ const Wordle = ({ solution, wordLength }: Props) => {
       // console.log("removing listener");
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleKeyUp, isCorrect]);
+  }, [handleKeyUp, isCorrect, turn]);
+
+  const restartGame = () => {
+    setShowModal(false);
+
+    resetWordle();
+    resetGame();
+  };
 
   return (
     <>
@@ -61,7 +67,12 @@ const Wordle = ({ solution, wordLength }: Props) => {
         handleClick={handleClick}
       ></Keyboard>
       {showModal && (
-        <Modal isCorrect={isCorrect} turn={turn} solution={solution} />
+        <Modal
+          isCorrect={isCorrect}
+          turn={turn}
+          solution={solution}
+          resetGame={restartGame}
+        />
       )}
     </>
   );

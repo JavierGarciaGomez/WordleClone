@@ -13,7 +13,13 @@ function App() {
   );
   const [solution, setSolution] = useState<string>("");
 
-  console.log({ solution });
+  const resetGame = () => {
+    console.log("resetgame");
+    const randomSolution =
+      filteredWords[Math.floor(Math.random() * filteredWords.length)];
+
+    setSolution(randomSolution);
+  };
 
   useEffect(() => {
     const randomSolution =
@@ -22,10 +28,18 @@ function App() {
     setSolution(randomSolution);
   }, [setSolution]);
 
+  useEffect(() => {}, [solution]);
+
   return (
     <div className="App">
       <h1>Wordle clone</h1>
-      {solution && <Wordle solution={solution} wordLength={wordLength} />}
+      {solution && (
+        <Wordle
+          solution={solution}
+          wordLength={wordLength}
+          resetGame={resetGame}
+        />
+      )}
     </div>
   );
 }
